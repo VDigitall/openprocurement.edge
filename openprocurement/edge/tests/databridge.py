@@ -44,9 +44,11 @@ class AlmostAlwaysTrue(object):
 class TestEdgeDataBridge(TenderBaseWebTest):
     config = {
         'main': {
-            'resources_api_server': 'https://lb.api-sandbox.openprocurement.org',
+            'resources_api_server':
+                'https://lb.api-sandbox.openprocurement.org',
             'resources_api_version': "0",
-            'public_resources_api_server': 'https://lb.api-sandbox.openprocurement.org',
+            'public_resources_api_server':
+                'https://lb.api-sandbox.openprocurement.org',
             'couch_url': 'http://localhost:5984',
             'db_name': 'test_db',
             'queue_size': 101,
@@ -103,9 +105,11 @@ class TestEdgeDataBridge(TenderBaseWebTest):
             pass
 
     def tearDown(self):
-        self.config['resources_api_server'] = 'https://lb.api-sandbox.openprocurement.org'
+        self.config['resources_api_server'] =\
+            'https://lb.api-sandbox.openprocurement.org'
         self.config['resources_api_version'] = "0"
-        self.config['public_resources_api_server'] = 'https://lb.api-sandbox.openprocurement.org'
+        self.config['public_resources_api_server'] =\
+            'https://lb.api-sandbox.openprocurement.org'
         self.config['couch_url'] = 'http://localhost:5984'
         self.config['db_name'] = 'test_db'
         self.config['queue_size'] = 101
@@ -123,7 +127,8 @@ class TestEdgeDataBridge(TenderBaseWebTest):
         self.config['bulk_query_limit'] = 1
         self.config['bulk_query_interval'] = 0.5
         try:
-            server = Server(self.config['main'].get('couch_url') or 'http://127.0.0.1:5984')
+            server = Server(self.config['main'].get('couch_url') or
+                            'http://127.0.0.1:5984')
             del server[self.config['main']['db_name']]
         except:
             pass
@@ -161,9 +166,11 @@ class TestEdgeDataBridge(TenderBaseWebTest):
         # Create EdgeDataBridge object with wrong config variable structure
         test_config = {
             'mani': {
-                'resources_api_server': 'https://lb.api-sandbox.openprocurement.org',
+                'resources_api_server':
+                    'https://lb.api-sandbox.openprocurement.org',
                 'resources_api_version': "0",
-                'public_resources_api_server': 'https://lb.api-sandbox.openprocurement.org',
+                'public_resources_api_server':
+                    'https://lb.api-sandbox.openprocurement.org',
                 'couch_url': 'http://localhost:5984',
                 'db_name': 'test_db',
                 'retrievers_params': {
@@ -180,7 +187,8 @@ class TestEdgeDataBridge(TenderBaseWebTest):
         self.assertEqual(e.exception.message, 'In config dictionary missed '
                          'section \'main\'')
 
-        # Create EdgeDataBridge object without variable 'resources_api_server' in config
+        # Create EdgeDataBridge object without variable 'resources_api_server'
+        # in config
         del test_config['mani']
         test_config['main'] = {
             'retrievers_params': {
@@ -212,14 +220,16 @@ class TestEdgeDataBridge(TenderBaseWebTest):
         self.assertEqual(e.exception.message, 'Invalid \'tenders_api_server\' '
                          'url.')
 
-        test_config['main']['resources_api_server'] = 'https://lb.api-sandbox.openprocurement.org'
+        test_config['main']['resources_api_server'] =\
+            'https://lb.api-sandbox.openprocurement.org'
 
         test_config['main']['db_name'] = 'public'
         test_config['main']['resources_api_version'] = "0"
         test_config['main']['public_resources_api_server'] \
             = 'https://lb.api-sandbox.openprocurement.org'
 
-        # Create EdgeDataBridge object with deleting config variables step by step
+        # Create EdgeDataBridge object with deleting config variables step
+        # by step
         bridge = EdgeDataBridge(test_config)
         self.assertEqual(type(bridge), EdgeDataBridge)
         with self.assertRaises(KeyError) as e:
@@ -242,14 +252,16 @@ class TestEdgeDataBridge(TenderBaseWebTest):
             test_config['main']['public_resources_api_server']
         self.assertEqual(e.exception.message, 'public_resources_api_server')
         del bridge
-        server = Server(test_config['main'].get('couch_url') or 'http://127.0.0.1:5984')
+        server = Server(test_config['main'].get('couch_url') or
+                        'http://127.0.0.1:5984')
         del server[test_config['main']['db_name']]
 
         test_config['main']['retrievers_params']['up_wait_sleep'] = 0
         with self.assertRaises(DataBridgeConfigError) as e:
             EdgeDataBridge(test_config)
-        self.assertEqual(e.exception.message, 'Invalid \'up_wait_sleep\' in '
-                         '\'retrievers_params\'. Value must be grater than 30.')
+        self.assertEqual(e.exception.message,
+                         'Invalid \'up_wait_sleep\' in \'retrievers_params\'.'
+                         ' Value must be grater than 30.')
 
     @patch('openprocurement.edge.databridge.APIClient')
     def test_fill_api_clients_queue(self, mock_APIClient):
@@ -333,7 +345,8 @@ class TestEdgeDataBridge(TenderBaseWebTest):
         return_dict = {
             'type': 'indexer',
             'database': bridge.db_name,
-            'design_document': '_design/{}'.format(bridge.workers_config['resource']),
+            'design_document':
+                '_design/{}'.format(bridge.workers_config['resource']),
             'progress': 99
         }
         bridge.server.tasks = MagicMock(return_value=[return_dict])
@@ -382,9 +395,7 @@ class TestEdgeDataBridge(TenderBaseWebTest):
         })]
         bridge = EdgeDataBridge(self.config)
         self.assertEqual(bridge.api_clients_queue.qsize(), 0)
-        self.assertEqual(bridge.log_dict['exceptions_count'], 0)
         bridge.create_api_client()
-        self.assertEqual(bridge.log_dict['exceptions_count'], 1)
         self.assertEqual(bridge.api_clients_queue.qsize(), 1)
 
         del bridge
@@ -413,9 +424,11 @@ class TestEdgeDataBridge(TenderBaseWebTest):
     def test_config_get(self):
         test_config = {
             'main': {
-                'resources_api_server': 'https://lb.api-sandbox.openprocurement.org',
+                'resources_api_server':
+                    'https://lb.api-sandbox.openprocurement.org',
                 'resources_api_version': "0",
-                'public_resources_api_server': 'https://lb.api-sandbox.openprocurement.org',
+                'public_resources_api_server':
+                    'https://lb.api-sandbox.openprocurement.org',
                 'couch_url': 'http://localhost:5984',
                 'db_name': 'test_db',
                 'retrievers_params': {
@@ -435,7 +448,8 @@ class TestEdgeDataBridge(TenderBaseWebTest):
         del bridge.config['main']['couch_url']
         couch_url_config = bridge.config_get('couch_url')
         self.assertEqual(couch_url_config, None)
-        server = Server(test_config['main'].get('couch_url') or 'http://127.0.0.1:5984')
+        server = Server(test_config['main'].get('couch_url') or
+                        'http://127.0.0.1:5984')
         del server[test_config['main']['db_name']]
 
         del bridge.config['main']
@@ -478,55 +492,6 @@ class TestEdgeDataBridge(TenderBaseWebTest):
         self.assertEqual(len(res_list), 4)
         self.assertEqual(grown, 1)
 
-    def test_bridge_stats(self):
-        bridge = EdgeDataBridge(self.config)
-        bridge.feeder = MagicMock()
-        bridge.feeder.queue.qsize.return_value = 44
-        bridge.feeder.backward_info = {
-            'last_response': datetime.datetime.now(),
-            'status': 1,
-            'resource_item_count': 13
-        }
-        bridge.feeder.forward_info = {
-            'last_response': datetime.datetime.now(),
-            'resource_item_count': 31
-        }
-        bridge.filler = MagicMock()
-        bridge.filler.exception = Exception('test_filler')
-        bridge.input_queue_filler = MagicMock()
-        bridge.input_queue_filler.exception = Exception('test_temp_filler')
-
-        sleep(1)
-        res = bridge.bridge_stats()
-        keys = ['resource_items_queue_size', 'retry_resource_items_queue_size', 'workers_count',
-                'api_clients_count', 'avg_request_duration', 'filter_workers_count',
-                'retry_workers_count', 'min_avg_request_duration', 'max_avg_request_duration']
-        for k, v in bridge.log_dict.items():
-            self.assertEqual(res[k], v)
-        for k in keys:
-            self.assertEqual(res[k], 0)
-        self.assertEqual(res['sync_backward_response_len'],
-                         bridge.feeder.backward_info['resource_item_count'])
-        self.assertEqual(res['sync_forward_response_len'],
-                         bridge.feeder.forward_info['resource_item_count'])
-        self.assertGreater(res['vms'], 0)
-        self.assertGreater(res['rss'], 0)
-        self.assertGreater(res['sync_backward_last_response'], 0)
-        self.assertGreater(res['sync_forward_last_response'], 0)
-        self.assertEqual(res['sync_queue'], 44)
-        self.assertEqual(res['resource'], bridge.workers_config['resource'])
-        self.assertEqual(res['_id'], bridge.workers_config['resource'])
-        self.assertNotEqual(res['time'], '')
-
-        bridge.feeder.backward_info['status'] = 0
-        bridge.api_clients_info['c1'] = {'request_durations': {datetime.datetime.now(): 1}}
-        bridge.api_clients_info['c2'] = {'request_durations': {datetime.datetime.now(): 2}}
-
-        res = bridge.bridge_stats()
-        self.assertEqual(res['sync_backward_last_response'], 0)
-        self.assertNotEqual(res['max_avg_request_duration'], 0)
-        self.assertNotEqual(res['min_avg_request_duration'], 0)
-
     def test__calculate_st_dev(self):
         bridge = EdgeDataBridge(self.config)
         values = [1.1, 1.11, 1.12, 1.13, 1.14]
@@ -550,7 +515,8 @@ class TestEdgeDataBridge(TenderBaseWebTest):
             self.assertEqual(bridge.api_clients_info[cid]['destroy'], False)
             bridge.api_clients_info[cid]['avg_duration'] = avg_duration
             bridge.api_clients_info[cid]['grown'] = True
-            bridge.api_clients_info[cid]['request_interval'] = req_intervals[avg_duration]
+            bridge.api_clients_info[cid]['request_interval'] =\
+                req_intervals[avg_duration]
             avg_duration += 1
         avg = 1.5
         bridge._mark_bad_clients(avg)
